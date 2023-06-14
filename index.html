@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/dracula.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-markdown>
+					<textarea data-template>
+						# Functional programming
+						Proudly presented by Tomas Ilginis :)
+					</textarea>
+				</section>
+				<section>
+					<section data-markdown>
+						<textarea data-template>
+							### What is FP ?
+							Functional programming (FP) is an approach to software development that uses **pure functions** to create maintainable software. In other words, building programs by applying and **composing functions**
+						</textarea>
+					</section>
+					<section data-markdown data-transition="zoom">
+						<textarea data-template>
+							#### Pure function
+							1. With the same input you get the same output
+							2. The function application also has no side effects (i.e., it does not modify state variable values outside its local environment).
+							<pre class="fragment">
+								<code data-trim data-noescape>
+									function updateMyAddress(newAddress) {
+										const myAddress = [“ChurchSt”, “CovingtonCross”];
+										myAddresses[myAddresses.length] = newAddress;
+										return myAddresses;
+										}
+								</code>
+								<span class="fragment">
+									<span class="fragment highlight-green">
+										Is it pure ? 
+									</span>
+								</span>
+							</pre>
+							<pre class="fragment">
+								<code data-trim data-noescape>
+									const add = (x, y) => x + y;
+								</code>
+								<span class="fragment">
+									<span class="fragment highlight-green">
+										Is it pure ? 
+									</span>
+								</span>
+							</pre>
+						</textarea>
+					</section>
+					<section data-transition="zoom">
+						<pre class="fragment">
+							<code data-trim data-noescape>
+								const double = (x) => {
+									console.log('doubling', x);
+									return x * 2;
+									};
+							</code>
+							<span class="fragment">
+								<span class="fragment highlight-red">
+									Is it pure ? 
+								</span>
+								<span class="fragment">Not great, not terrible</span>
+							</span>
+						</pre>
+						<pre class="fragment">
+							<code data-trim data-noescape>
+								const assocKey = (key, value, object) => {
+									object[key] = value;
+									return object;
+								  };
+							</code>
+							<span class="fragment">
+								<span class="fragment highlight-red">
+									Is it pure ? 
+								</span>
+								<span class="fragment">Dude, seriously ? </span>
+							</span>
+						</pre>
+					</section>
+				  </section>
+			</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
