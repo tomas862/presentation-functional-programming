@@ -18,7 +18,7 @@
 			<div class="slides">
 				<section data-markdown>
 					<textarea data-template>
-						# Functional programming
+						# **F**(unctional)(**a**nd)(**p**rogrammin)<sup>g</sup>
 						Proudly presented by Tomas Ilginis :)
 					</textarea>
 				</section>
@@ -72,7 +72,9 @@
 								<span class="fragment highlight-red">
 									Is it pure ? 
 								</span>
-								<span class="fragment">Not great, not terrible</span>
+								<span class="fragment">
+									<img data-src="meme_not_great_not_terrible.jpeg">
+								</span>
 							</span>
 						</pre>
 						<pre class="fragment">
@@ -90,7 +92,52 @@
 							</span>
 						</pre>
 					</section>
-				  </section>
+				</section>
+				<section>
+					<section data-markdown>
+						<textarea data-template>
+							### Other FP concepts
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							#### **First class** functions
+							<p class="fragment">
+								1. Can be assigned to regular variables
+							</p>
+							<p class="fragment">
+								2. Passed as arguments to functions
+							</p>
+							<p class="fragment">
+								3. Returned as results of functions
+							</p>
+							<p class="fragment">
+								4. Included in any data structures
+							</p>
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							#### **Lazy** evaluation
+							<p>Meant to delay the evaluation of an expression until it’s needed</p>
+							<pre class="fragment">
+								<code data-trim data-noescape>
+									const someValue = expensiveFunction();
+									... // Tons of other operations that don't involve someValue, including user interactions
+									console.log(someValue);
+								</code>
+							</pre>
+							<p class="fragment">Solution ? </p>
+							<pre class="fragment">
+								<code data-trim data-noescape>
+									const someValue = expensiveFunction;
+									... // Tons of other operations that don't involve someValue, including user interactions
+									console.log(someValue());
+								</code>
+							</pre>
+						</textarea>
+					</section>
+				</section>
 			</div>
 		</div>
 
