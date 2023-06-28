@@ -137,6 +137,85 @@
 							</pre>
 						</textarea>
 					</section>
+					<section data-markdown>
+						<textarea data-template>
+							#### **Higher** order function
+							<p class="fragment">
+								Its a function that can accept other functions as arguments or return function as result
+							</p>
+							<pre class="fragment">
+								<code data-trim data-noescape>
+									const arr1 = [1, 2, 3];
+									const arr2 = arr1.map(function(item) {
+									return item * 2;
+									});
+									console.log(arr2);
+								</code>
+							</pre>
+						</textarea>
+					</section>
+					<section>
+						<pre>
+							<code data-trim data-noescape>
+								const strArray = ['JavaScript', 'Python', 'PHP', 'Java', 'C'];
+								function mapForEach(arr, fn) {
+								  const newArray = [];
+								  for(let i = 0; i < arr.length; i++) {
+									newArray.push(
+									  fn(arr[i])
+									);
+								  }
+								  return newArray;
+								}
+								const lenArray = mapForEach(strArray, function(item) {
+								  return item.length;
+								});
+								// prints [ 10, 6, 3, 4, 1 ]
+								console.log(lenArray);
+							</code>
+						</pre>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							#### Composition
+							<p class="fragment">
+								Input of one function comes from the output of another function.
+							</p>
+							<p class="fragment">
+								<b>composition</b> > inheritance.
+							</p>
+							<p class="fragment">
+								Don't mistake with <b>Currying</b>!
+								<pre class="fragment">
+									<code data-trim data-noescape data-line-numbers="4-6">
+										// not currying
+										const add = (x,y) => x + y;
+										add(2,3); // => 5
+										// currying
+										const add = x => y => x + y;
+										add(2)(3); // => 5
+									</code>
+								</pre>
+							</p>
+						</textarea>
+					</section>
+					<section>
+						<pre >
+							<code data-trim data-noescape data-line-numbers="1|2-3|4|5">
+								const compose = f => g => x => f(g(x));
+								compose
+									(x => x * 4)
+									(x => x + 3)
+									(2);
+								
+							</code>
+						</pre>
+						<pre class="fragment">
+							<code>
+								// 20
+							</code>
+						</pre>
+					</section>
 				</section>
 			</div>
 		</div>
