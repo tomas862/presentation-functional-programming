@@ -216,6 +216,115 @@
 							</code>
 						</pre>
 					</section>
+					<section data-markdown>
+						<textarea data-template>
+							#### Function Composition
+							<p class="fragment">
+								Function composition is a way of combining pure functions to build more complicated ones. 
+								Like the usual composition of functions in mathematics, the result of one function is passed as the argument of the next, 
+								and the result of last one is the result of the whole
+							</p>
+							<pre class="fragment">
+								<code data-trim>
+									const compose = (...fns) => (x) => fns.reduceRight(
+										(y, fn) => fn(y), x
+									);
+								</code>
+							</pre>
+							<pre class="fragment">
+								<code>
+									const g = n => n + 1;
+									const f = n => n * 2;
+									const h = compose(f, g);
+									h(20);
+								</code>
+							</pre>
+							<pre class="fragment">
+								<code>
+									// 42
+								</code>
+							</pre>
+						</textarea>
+					</section>
+				</section>
+				<section>
+					<section data-markdown>
+						<textarea data-template>
+							### Javascript library to the resque (**Ramda**)
+							<p class="fragment">
+								Let's demo it using todo list sample. Our task is to filter incomplete tasks.
+							</p>
+						</textarea>
+					</section>
+					<section>
+						<p>In javascript we do</p>
+						<pre>
+							<code data-trim>
+								const incompleteTasks = tasks.filter(function(task) {
+									return !task.complete;
+								});
+							</code>
+						</pre>
+					</section>
+					<section>
+						<p>In lodash we do</p>
+						<pre>
+							<code data-trim>
+								const incompleteTasks = _.filter(tasks, {complete: false});
+							</code>
+						</pre>
+					</section>
+					<section>
+						<p>In Ramda we do</p>
+						<pre>
+							<code data-trim>
+								const incomplete = R.filter(R.where({complete: false});
+							</code>
+						</pre>
+						<p class="fragment">Did you noticed something ? </p>
+						<p class="fragment">Where is the data ?</p>
+					</section>
+					<section>
+						<p>
+							Because we now have a function we can easily combine it with others to operate on whatever sets of data we choose. Imagine we had a function <b>groupByUser</b> that grouped the TODO items by user. 
+							Then we could simply create a new function
+						</p>
+						<pre class="fragment">
+							<code data-trim>
+								const activeByUser = R.compose(groupByUser, incomplete);
+							</code>
+						</pre>
+						<pre class="fragment">
+							<code data-trim>
+								// in JS
+								const activeByUser = function(tasks) {
+									return groupByUser(incomplete(tasks));
+								};
+							</code>
+						</pre>
+					</section>
+					<section>
+						What if we then need to sort each of these users' TODO lists by due date
+						<pre class="fragment">
+							<code data-trim>
+							
+								const sortUserTasks = R.compose(
+									R.map(R.sortBy(R.prop("dueDate"))),
+									activeByUser
+								);
+							</code>
+						</pre>
+						<pre class="fragment">
+							<code data-trim>
+								// All in one
+								const sortUserTasks = R.compose(
+									R.mapObj(R.sortBy(R.prop('dueDate'))),
+									groupByUser,
+									R.filter(R.where({complete: false})
+								);
+							</code>
+						</pre>
+					</section>
 				</section>
 			</div>
 		</div>
