@@ -10,6 +10,14 @@
 		<link rel="stylesheet" href="dist/reveal.css">
 		<link rel="stylesheet" href="dist/theme/dracula.css">
 
+		<style>
+			.scrollable {
+				bottom: 0px;
+				overflow-y: auto  !important;
+				overflow-x: hidden !important;
+			}
+		</style>
+
 		<!-- Theme used for syntax highlighted code -->
 		<link rel="stylesheet" href="plugin/highlight/monokai.css">
 	</head>
@@ -325,6 +333,242 @@
 							</code>
 						</pre>
 					</section>
+					<section>
+						Its probably hard to follow ? Maybe some samples with the API's then
+					</section>
+					<section class="scrollable">
+						We have this data:
+						<pre>
+							<code data-trim>
+								var data = {
+									result: "SUCCESS",
+									interfaceVersion: "1.0.3",
+									requested: "10/17/2013 15:31:20",
+									lastUpdated: "10/16/2013 10:52:39",
+									tasks: [
+										{id: 104, complete: false,            priority: "high",
+												  dueDate: "2013-11-29",      username: "Scott",
+												  title: "Do something",      created: "9/22/2013"},
+										{id: 105, complete: false,            priority: "medium",
+												  dueDate: "2013-11-22",      username: "Lena",
+												  title: "Do something else", created: "9/22/2013"},
+										{id: 107, complete: true,             priority: "high",
+												  dueDate: "2013-11-22",      username: "Mike",
+												  title: "Fix the foo",       created: "9/22/2013"},
+										{id: 108, complete: false,            priority: "low",
+												  dueDate: "2013-11-15",      username: "Punam",
+												  title: "Adjust the bar",    created: "9/25/2013"},
+										{id: 110, complete: false,            priority: "medium",
+												  dueDate: "2013-11-15",      username: "Scott",
+												  title: "Rename everything", created: "10/2/2013"},
+										{id: 112, complete: true,             priority: "high",
+												  dueDate: "2013-11-27",      username: "Lena",
+												  title: "Alter all quuxes",  created: "10/5/2013"}
+										// , ...
+									]
+								};
+							</code>
+						</pre>
+					</section>
+					<section>
+						And we need a function <b>getIncompleteTaskSummaries</b> that accepts a membername parameter, then fetches the data from the server (or somewhere), chooses the tasks for that member that are not complete, returns their ids, priorities, titles, and due dates, sorted by due date
+					</section>
+					<section class="scrollable">
+						<pre>
+							<code data-trim>
+								getIncompleteTaskSummaries = function(membername) {
+									return fetchData()
+										.then(function(data) {
+											return data.tasks;
+										})
+										.then(function(tasks) {
+											var results = [];
+											for (var i = 0, len = tasks.length; i < len; i++) {
+												if (tasks[i].username == membername) {
+													results.push(tasks[i]);
+												}
+											}
+											return results;
+										})
+										.then(function(tasks) {
+											var results = [];
+											for (var i = 0, len = tasks.length; i < len; i++) {
+												if (!tasks[i].complete) {
+													results.push(tasks[i]);
+												}
+											}
+											return results;
+										})
+										.then(function(tasks) {
+											var results = [], task;
+											for (var i = 0, len = tasks.length; i < len; i++) {
+												task = tasks[i];
+												results.push({
+													id: task.id,
+													dueDate: task.dueDate,
+													title: task.title,
+													priority: task.priority
+												})
+											}
+											return results;
+										})
+										.then(function(tasks) {
+											tasks.sort(function(first, second) {
+												var a = first.dueDate, b = second.dueDate;
+												return a < b ? -1 : a > b ? 1 : 0;
+											});
+											return tasks;
+										});
+								};
+							</code>
+						</pre>
+					</section>
+					<section>
+						The Ramda way
+						<pre>
+							<code data-trim>
+								const getIncompleteTaskSummaries = function(membername) {
+									return fetchData()
+										.then(R.get('tasks'))
+										.then(R.filter(R.propEq('username', membername)))
+										.then(R.reject(R.propEq('complete', true)))
+										.then(R.map(R.pick(['id', 'dueDate', 'title', 'priority'])))
+										.then(R.sortBy(R.get('dueDate')));
+								};
+							</code>
+						</pre>
+					</section>
+					<section>
+						Hmmm, but we can improve first code by writting modern javascript
+					</section>
+					<section>
+						<pre>
+							<code data-trim>
+								const getIncompleteTaskSummaries = function(membername) {
+									return fetchData()
+										.then(({ tasks }) => tasks)
+										.then((tasks) => tasks.filter(({ username }) => 
+											username === membername
+										))
+										.then((tasks) => tasks.filter(({ completed }) => 
+											completed === false
+										))
+										.then(({ id, dueDate, title, priority }) => ({
+											id,
+											dueDate,
+											title,
+											priority
+										}))
+										.then((tasks) => [...tasks].sort(function(first, second) {
+											var a = first.dueDate, b = second.dueDate;
+											return a < b ? -1 : a > b ? 1 : 0;
+										}));
+								};
+							</code>
+						</pre>
+					</section>
+
+				</section>
+				<section>
+					<section data-markdown>
+						<textarea data-template>
+							### What about PHP ? 
+						</textarea>
+					</section>
+					<section class="scrollable">
+						<pre>
+							<code data-trim>
+								class Controller {
+									public function init(string $membername)
+									{
+										const $data = [ 'tasks': [// same format as in previous task] ];
+										
+										$pickedTasks = [];
+										foreach($data['tasks'] as $task) {
+											if (
+												$task['username'] !== $membername || 
+												$task['completed'] === true
+											) { 
+												continue;
+											}
+
+											$pickedTasks[] = [
+												'id' => $task['id'],
+												'dueDate' => $task['dueDate'],
+												'title' => $task['title'],
+												'priority' => $task['priority'],
+											];
+										}
+
+										usort($pickedTasks, $whateverFnToSortByDateProperty);
+									}
+								}
+							</code>
+						</pre>
+					</section>
+					<section class="scrollable">
+						Lets try to use Knapsack collection library
+						<pre>
+							<code data-trim>
+								class Controller {
+									public function init(string $membername)
+									{
+										const $data = [ 'tasks': [// same format as in previous task] ];
+
+										Collection::from($data['tasks'])
+											->filter(fn ($task) => $task['username'] === $membername)
+											->filter(fn ($task) => $task['completed'] === false)
+											->map(fn ($task) => [
+												'id' => $task['id'],
+												'dueDate' => $task['dueDate'],
+												'title' => $task['title'],
+												'priority' => $task['priority'],
+											])
+											->sort(fn (a, b) => { // to lazy to google  })
+											->values()
+											->toArray();
+									}
+								}
+							</code>
+						</pre>
+					</section>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						## Conclusion
+
+						* FP is great!
+						* You don't need any library to work with FP, just need to know the concepts.
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						# Thank you!
+
+						Sauce:
+
+						<a href="https://www.codingdojo.com/blog/what-is-functional-programming#:~:text=Functional%20programming%20(FP)%20is%20an,by%20applying%20and%20composing%20functions.">
+							SAUCE 1
+						</a>
+						<a href="https://blog.bitsrc.io/functional-programming-part-1-first-class-functions-791103984dfb">
+							SAUCE 2
+						</a>
+						<a href="https://javascript.plainenglish.io/javascript-lazy-evaluation-iterables-iterators-e0770a5de96f">
+							SAUCE 3
+						</a>
+						<a href="https://dev.to/biomathcode/composition-of-functions-178g#:~:text=Function%20composition%20is%20a%20way,term%20which%20means%20%22combining%22.">
+							SAUCE 4
+						</a>
+						<a href="https://dev.to/biomathcode/composition-of-functions-178g#:~:text=Function%20composition%20is%20a%20way,term%20which%20means%20%22combining%22.">
+							SAUCE 5
+						</a>
+						<a href="https://fr.umio.us/why-ramda/">
+							SAUCE 6
+						</a>
+						<a href="https://mtsknn.fi/blog/why-compose-is-right-to-left/">
+							SAUCE 7
+						</a>
+					</textarea>
 				</section>
 			</div>
 		</div>
